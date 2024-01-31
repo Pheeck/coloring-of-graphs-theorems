@@ -1,0 +1,1132 @@
+\documentclass{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{csquotes}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Table of contents
+\usepackage{blindtext}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+
+\newtheorem*{theorem}{Theorem}
+\newtheorem*{definition}{Definition}
+\newtheorem*{lemma}{Lemma}
+\newtheorem*{conjecture}{Conjecture}
+\newtheorem*{observation}{Observation}
+\newtheorem*{corollary}{Corollary}
+
+\newcommand{\Z}{\mathbb{Z}}
+
+\begin{document}
+
+\section*{Note}
+This document is a list of theorems and definitions taught in the 2023/24 run
+of the Coloring of Graphs and Other Combinatorial Structures lecture. I also
+added some notes concerning the material where it seemed appropriate to me.
+Good luck with the exam. --Filip Kastl, \today
+
+\tableofcontents
+
+\newpage
+\section*{Notation and some definitions}
+\begin{itemize}
+	\item Girth -- Length of shortest cycle
+	\item $G^*$ -- Dual graph to $G$
+	\item $G[A]$ -- Subgraph of $G$ induced by the vertex set $A$
+	\item $\Delta(G)$ -- Max degree of graph $G$
+	\item $G$ is $d$-degenerate -- Every subgraph has a vertex of degree
+		$\le d$
+	\item $||G||$ (in lecture notes) -- Number of edges of $G$
+	\item $|G|$ (in lecture notes) -- Number of vertices of $G$
+	\item Clique number $\omega$ of $G$ -- The size of the biggest clique
+		in $G$
+\end{itemize}
+
+\section*{Good things to remember}
+\begin{itemize}
+	\item A graph is bipartite iff it doesn't contain any odd cycles
+	\item $d$-degeneracy $\implies$ $(d+1)$-colorability
+		\begin{itemize}
+			\item
+				Alg: Build a sequence of vertices so that every
+				vertex has at most $d$ edges going left. Now
+				color vertices greedily from left to right. To
+				build the sequence always take the vertex with
+				$\deg d$, put it on the leftmost position and
+				remove it from the graph. Continue until the
+				graph is empty.
+		\end{itemize}
+	\item Girth $\ge 4$ means that the graph is triangle-free
+	\item In this lecture it suffices to talk about graph of girth $k, k
+		\ge 3$ because cycles of length $2$ and less only exist in
+		multigraphs.
+	\item $2$-colorability is deciding if the graph is bipartite which can
+		be done by a greedy algorithm in linear time
+	\item Bridgeless is the same thing as $2$-edge-connected
+\end{itemize}
+
+
+\newpage
+\section{List coloring} % Lecture 1
+3.10.2023
+
+\subsection*{Recap of theorems from other lectures}
+
+\begin{theorem}[Brooks]
+	Let $G$ be a connected graph, $G \not \simeq K_n, C_{2l+1}$. Then
+	$\chi(G) \le \Delta(G)$.
+\end{theorem}
+
+\begin{theorem}[Vizing]
+	Let $G$ be a simple graph (not a multigraph). Then $\Delta(G) \le
+	\chi_e(G) \le \Delta(G)+1$
+\end{theorem}
+
+\begin{theorem}[Euler's formula]
+	Let $G$ be a graph drawn on a surface of genus $g$. Then
+	$$ |E(G)| \le |V(G)| + |F(G)| + g - 2 $$
+	The equality holds for $2$-cell embeddings (each face homeomorphic to
+	open disc).
+\end{theorem}
+
+\begin{corollary}
+	For $|V(G)| \ge 3: |E(G)| \le 3|V(G)| + 3g - 6$
+\end{corollary}
+
+\begin{corollary}
+	$${{2|E(G)|}\over{|V(G)|}} \le 6 + {{6(g-2)}\over{|V|}}$$
+	(${{2|E(G)|}\over{|V(G)|}}$ is the average degree)
+\end{corollary}
+
+\begin{theorem}[Heawood's formula]
+	Let $G$ be a graph drawn on a surface of genus $g$. Then
+	$$\chi(G) \le
+	\left \lfloor {{7 + \sqrt{24g+1}}\over{2}} \right \rfloor$$
+\end{theorem}
+
+\noindent
+Deciding $3$-colorability of planar graphs is NP-complete.
+
+\subsection*{List coloring}
+
+\begin{definition}[List coloring]
+	~
+	\begin{itemize}
+		\item \emph{$k$-list-assignment} is an assignment of lists of
+			size $k$ for each vertex.
+
+		\item A graph $G$ is \emph{$k$-list-colorable} (=$k$-choosable)
+			if it can be colored by colors from any
+			$k$-list-assignment $L$.
+
+		\item The list chromatic number $\chi_l(G)$ is the min $k$ s.t.
+			$G$ is $k$-list-colorable.
+	\end{itemize}
+\end{definition}
+
+\noindent
+For example $\chi_l(C_4) = 2$
+
+\noindent
+\textbf{Observations.}
+\begin{itemize}
+	\item $\chi(G) \le \chi_l(G)$
+	\item If $G$ $d$-degenerate, $\chi_l(G) \le d + 1$
+\end{itemize}
+
+\begin{lemma}
+	$\chi_l(K_{a,a^a}) = a + 1$
+
+	(This is an example where $\chi_l$ and $\chi$ differ. $\chi(K_{a,a^a})
+	= 2$)
+\end{lemma}
+
+\noindent
+Exists $G$ planar s.t. $\chi_l(G) > 4$ (Voigt). Foreach $G$ planar $\chi_l(G)
+\le 5$ (Thomassen). We are going to prove these claims in lecture 11.
+
+\noindent
+Can we extend $\chi$ theorems to $\chi_l$?
+\begin{itemize}
+	\item Heawood works for $\chi_l$ but only for $g > 0$
+	\item Vizing's theorem for list coloring (edge list coloring i guess??)
+		is an open problem
+	\item Brook's theorem works for $\chi_l$
+\end{itemize}
+
+\begin{definition}[Degree list coloring]
+	~
+	\begin{itemize}
+		\item \emph{degree-list-assignment} is a list-assignment s.t.
+			$\forall v: |L(v)| \le \deg v$.
+
+		\item A graph $G$ is \emph{degree-list-colorable}
+			(=degree-choosable) if it can be colored by colors from
+			any degree-list-assignment $L$.
+	\end{itemize}
+\end{definition}
+
+\noindent
+Could we strenghten Brook's $\chi_l$ theorem so that any graph $G \not \simeq
+K_k, C_{2l+1}$ is degree-list-colorable? But this doesn't hold -- consider a
+$k$-star graph.
+
+\begin{definition}
+	A connected graph $G$ is a \emph{Gallai tree} if each of its
+	$2$-edge-connected component is $K_k$ or $C_{2l+1}$.
+\end{definition}
+
+\noindent
+\textbf{Observation.} Gallai trees are not degree-list-colorable.
+
+\begin{theorem}
+	If $G$ connected, $G$ is not a Gallai tree, then $G$ is
+	degree-list-colorable.
+\end{theorem}
+
+\begin{lemma}
+	$G$ connected, $L$ degree-list-assignment, $\exists v: |L(v)| > \deg
+	v$. Then $G$ is $L$-colorable.
+\end{lemma}
+\begin{proof}
+	Take $v$ with $|L(v)| > \deg v$, color it with any color, remove the
+	color from lists of its neighbors, remove $v$ from graph. Now the
+	neighbors all have $|L(w)| > \deg w$. Repeat until everything is
+	colored.
+\end{proof}
+
+\begin{lemma}
+	$G$ connected, $L$ degree-list-assignment, $uv \in E(G)$, $v$ is not a
+	cut vertex, $G$ is not $L$-colorable. Then $L(u) \subseteq L(v)$.
+\end{lemma}
+
+\begin{corollary}
+	$G$ connected, $L$ degree-list-assignment, $uv \in E(G)$, $u, v$ not
+	cut vertices, $G$ not $L-colorable$. Then $L(u) = L(v)$.
+\end{corollary}
+
+\begin{corollary}
+	$G$ $2$-connected, $L$ degree-list-assignment, $G$ not $L$-colorable.
+	Then $(\forall u, v \in V(G)) L(u) = L(v)$ and $G \simeq K_k$ or $G
+	\simeq C_{2l+1}$.
+\end{corollary}
+
+
+\newpage
+\section{Critical 1} % Lecture 2
+10.10.2023
+
+\noindent
+In this lecture we define critical graphs and build a little theory around
+them. Then using the theorem about degree-list-coloring from the previous
+lecture we formulate a lower bound on the density of critical graphs. This
+bound will be useful in the next lecture where we use it to build a polynomial
+algorithm to decide colorability of many surface-drawn graphs.
+
+\begin{definition}
+	A graph $G$ is \emph{$c$-critical} if $\chi(G) = c$, but every proper
+	subgraph $G$ is $(c - 1)$-colorable.
+\end{definition}
+
+\noindent
+\textbf{Observations.}
+\begin{itemize}
+	\item $G$ is $2$-critical iff $G = K_2$
+	\item $G$ is $3$-critical iff $G$ is odd cycle
+	\item $G$ is $c$-colorable iff $G$ doesn't contain $(c+1)$-critical
+		subgraph
+	\item Each $(c+1)$-critical graph has minimum degree at least $c$
+\end{itemize}
+
+\begin{lemma}
+	Let $G$ be a $(c+1)$-critical graph and let $S$ be the set of vertices
+	of $G$ of degree $c$. Then each component of $G[S]$ is a Gallai tree.
+\end{lemma}
+
+\begin{lemma}
+	If $F$ is a Gallai forest, $\Delta(F) \le c, F \not \simeq K_{c+1}, c
+	\ge 3$, then
+	$$ E(F) \le \left ({{c-1}\over2} + {1 \over c} \right ) V(F) $$
+\end{lemma}
+
+\begin{theorem}
+	For $c \ge 3$ if $G$ is a $(c+1)$-critical graph and $G \not \simeq
+	K_{c+1}$, then $G$ has average degree at least
+	$$ c + {{c-2}\over{c^2 + 2c - 2}} $$
+\end{theorem}
+
+\noindent
+Cases $c < 3$ are covered by observations we made. Also, consider graphs
+$K_{c+1}$. Their average degree is $c$ so the theorem clearly cannot hold for
+them. They are a class of critical graphs with the lowest average degree. They
+certify that the lower bound on minimum degree we formulated as an observation
+is tight.
+
+
+\newpage
+\section{Critical 2: Surfaces} % Lecture 3
+17.10.2023
+
+\noindent
+In this lecture we present two algorithms able to color many types of
+surface-embedded graphs in polynomial time (linear time in the number of
+vertices with a constant factor polynomially dependent on the genus of the
+surface). There are also two random results about triangulations and
+quadrangulations thrown in.
+
+\subsection*{First algorithm}
+
+\begin{corollary}[...of Euler's formula]
+	Let $G$ have girth $\ge k$ and $G$ not a forest, then
+	$$ |E(G)| \le {k\over{k-2}}(|V(G)| + g - 2)$$
+\end{corollary}
+
+This theorem follows from the corollary:
+
+\begin{theorem}
+	Let $C_{k,g} = {{2k(g-2)}\over{k-2}}$ Let $G$ be a graph with girth $k
+	\ge 3$ (no trees) that can be embedded in a surface of genus $g$. Then
+	average degree of $G$ is at most $$ {{2k}\over{k-2}} +
+	{C_{k,g}\over{|V(G)|}}$$
+\end{theorem}
+
+\noindent
+This theorem is at the heart of the first algorithm. Let's fix $k,g$. Consider
+the case where $|V(G)| > C_{k,g}$. This means that ${C_{k,g}\over{|V(G)|}} <
+1$. Then the average degree is $< {{2k}\over{k-2}} + 1$ . For example if $k =
+3$, the average degree is $< 7$. This means that the graph contains at least
+one vertex of degree $6$.
+
+This gives us a greedy algorithm similar to the one that is used to color a
+$d$-degenerate graph. We find a vertex of degree $\le 6$ among uncolored
+vertices, color it (there is at most $6$ colors among its neighbors, one color
+must be left), repeat.
+
+However a problem arises when we reach $|V(G)| \le C_{k,g}$. The graph may no
+longer contain a vertex of degree $6$. But at this point the problem of
+\enquote{is $G$ $7$-colorable} has been reduced to \enquote{is $G, |V(G)| \le
+C_{k,g}$ $7$-colorable}. That problem can be solved by just comparing $G$ to
+all $7$-colorable graphs of girth $\le k$ embeddable into a surface of genus
+$g$.
+
+The time complexity of this algorithm is $O(|V(G)| + |E(G)| + f(k, g))$ where
+$f$ is a polynomial-bounded function. Given a graph of girth $k$ it can decide
+its $c$-colorability, $c := {{2k}\over{k-2}} + 1$
+
+\subsection*{Second algorithm}
+
+From the previous theorem and the theorem at the end of the previous lecture,
+we get this corollary (we combine lower and upper bound for average degree of a
+critical graph)
+
+\begin{corollary}
+	Let $G$ be $(c + 1)$-critical, girth of $G$ is at least $k$, $c \ge
+	\max \left ( 3, {{2k}\over{k-2}} \right )$ embedded in a surface of
+	genus $g$, $G \not \simeq K_{c+1}$. Then $$ |V(G)| \le {{c^2 + 2c -
+	2}\over{c - 2}} C_{k,g} $$ where $C_{k,g}$ is a term dependent only on
+	$k$ and $g$.
+\end{corollary}
+
+This gives us a bound on the number of vertices of a $(c + 1)$-critical graph
+of girth at least $k$. That means that the number of $(c + 1)$-critical graphs
+with girth at least $k$ is also bounded.
+
+This gives us another algorithm for checking $c$-colorability. Consider the
+observation from the previous lecture that $G$ is $c$-colorable iff it doesn't
+contain any $(c + 1)$-critical subgraphs. Also consider that if $G$ has girth
+$\ge k$, its subgraphs have girth $\ge k$. So to check $c$-colorability of a
+graph of girth $\le k$, we may just check compare its subgraphs with finitely
+many $(c + 1)$-critical graphs of girth $\le k$. The algorithm runs in
+polynomial time (there exists an algorithm that for a fixed graph $F$ and
+surface $\Sigma$ decides $F \subseteq G$ in linear time).
+
+This algorithm allows us to decide $c$-colorability for all the combinations of
+$k$ and $c$ that the previous algorithm did and more. These are the $k,c$ pairs
+that this algorithm doesn't work on:
+\begin{itemize}
+	\item $c = 3, k = 3$ -- This is NP-complete
+	\item $c = 4, k = 3$ -- This is an open problem
+	\item $c = 5, k = 3$ and $c = 3, k = 5$ -- These require a more
+		complicated argument
+	\item $c = 3, k = 4$ -- Here the number of critical graphs is not
+		bounded but there still is a polynomial time algorithm
+\end{itemize}
+
+\subsection*{Triangulations and quadrangulations}
+Some results specific to triangulations and quadrangulations. I am not sure why
+we formulate these.
+
+\begin{definition}
+	\emph{Triangulation} is a graph embedded into a surface s.t. each face
+	forms a $3$-cycle.
+
+	\emph{Quadrangulation} is a graph embedded into a surface s.t. each
+	face forms a $4$-cycle.
+\end{definition}
+
+\begin{lemma}[About triangulations]
+	If $G$ is a triangulation of an orientable surface and only vertices
+	$u,v$ have odd degree, then $u,v$ have the same color in any
+	$4$-coloring of $G$.
+\end{lemma}
+
+\noindent
+In particular if $u,v$ are adjacent, $G$ is not $4$-colorable. It was mentioned
+that by connecting $u,v$, we can somehow construct infinitely many $4$-critical
+graphs on torus. I don't know how, though.
+
+\begin{lemma}[About quadrangulations]
+	Suppose $G$ is a quadrangulation of the projective plane and $G$ is not
+	bipartite. For every proper coloring, exists a face whose vertices have
+	$4$-different colors.
+\end{lemma}
+
+\noindent
+So $\chi(G) \ge 4$.
+
+
+\newpage
+\section{Critical 3: Kostochka and Yancey, Grötzsch} % Lecture 4
+23.10.2023
+
+\noindent
+In this lecture we are going to prove prof. Dvořák's favourite theorem -- the
+Grötzsch theorem -- using a claim about $4$-critical graphs.
+
+\begin{observation}
+	~
+	\begin{itemize}
+		\item $G$ $k$-critical $\Rightarrow$ $G$ $2$-connected
+		\item $G$ $k$-critical $\nRightarrow$ $G$ $3$-connected
+	\end{itemize}
+\end{observation}
+
+\noindent
+Holds for both edge-connectivity and vertex-connectivity.
+
+\begin{theorem}[Kostochka, Yancey]
+	If $G$ is $(c+1)$-critical, $c \ge 3$, then the average degree is at
+	least
+	$$c + 1 - {1 \over c} - O \left ( {1 \over {|V(G)|}} \right )$$
+\end{theorem}
+
+\noindent
+Without proof. The previous bound we had: $c + {{c-2}\over{c^2 + 2c - 2}} \sim
+c + {1 \over c}$.
+
+\begin{theorem}[Special case of Kostochka, Yancey]
+	If $G$ is $4$-critical, then the average degree is at least
+	$$ 3 + {1 \over 3} - {4 \over {3|V(G)|}} $$
+	Equivalently
+	$$ |E(G)| \ge {{5|V(G)| - 2} \over 3} $$
+\end{theorem}
+
+\begin{corollary}
+	Let $G$ be a $4$-critical planar graph. Let $f_3 := $\# of its
+	$3$-faces, $f_4 := $\# of its $4$-faces. Then
+	$$ 2f_3 + f_4 \ge 8 $$
+\end{corollary}
+
+\noindent
+From this corollary we prove Grötzsch's theorem.
+
+\begin{theorem}[Grötzsch]
+	Every triangle-free planar graph is 3-colorable.
+\end{theorem}
+
+\subsection*{Proving the special case of Kostochka, Yancey}
+
+We will be proving the theorem reformulated using the potential $P(G) :=
+5|V(G)| - 3|E(G)|$: If $G$ is $4$-critical, then $P(G) \le 2$. We'll be
+considering the minimal counterexample: $G$ $4$-critical, $P(G) \ge 3$ with
+min $|V(G)| + |E(G)|$. From now on, references to $G$ are to the minimal
+counterexample.
+
+\begin{lemma}
+	$\forall S \subseteq V(G), |S| \ge 4, S \neq V(G):
+	\exists G' \subseteq G: G[S] \subseteq G' \land P(G') \le P(G[S]) - 3$
+\end{lemma}
+
+\begin{lemma}
+	If $u,v \in S, u \neq v$, both $u$ and $v$ have a neighbor outside of
+	$S$ and $G[S] + uv$ is $3$-colorable, then either $G' \neq G$ or $P(G')
+	\le P(G[S])-4$.
+\end{lemma}
+
+\begin{lemma}
+	If $F \subseteq G, |V(F)| \ge 2$, then $P(F) \ge 6$.
+\end{lemma}
+
+\noindent
+The proof continues in the next lecture.
+
+
+\newpage
+\section{Critical 4, Discharging 1} % Lecture 5
+31.10.2023
+
+\noindent
+In this lecture we finish the proof of the special case of the Kostochka and
+Yancey theorem. At the end of the proof we use a discharging argument. In the
+last part of this lecture we introduce discharging properly.
+
+\begin{lemma}
+	$\forall H \subsetneq G, H \neq G - e \implies \forall u \neq v \in
+	V(H): H + uv$ is $3$-colorable (by $G - e$ we mean a graph obtained by
+	deleting any edge from $G$).
+\end{lemma}
+
+\begin{lemma}
+	No triangle in $G$ contains two vertices of degree $3$.
+\end{lemma}
+
+\noindent
+The following lemma is a strenghtening of the last lemma of the last lecture.
+
+\begin{lemma}
+	$H \subsetneq G, H \neq G - e, H \neq K_1, K_3 \implies P(H) \ge 7$
+\end{lemma}
+
+\begin{lemma}
+	If $uv \in E(G), \deg u = \deg v = 3$ then each of $u,v$ is incident
+	with a triangle.
+\end{lemma}
+
+\begin{corollary}
+	Every vertex of $G$ of degree $3$ has $\le 1$ neighbor of degree $3$.
+\end{corollary}
+
+\noindent
+The corollary follows from the seconds and fourth lemma of this lecture. The
+corollary is all we need to prove the special case. It gives us a reducible
+configuration of the minimal counterexample (a vertex of degree 3 with more
+than one vertex of degree 3 as neighbor). To finish the proof of the special
+case we use redistribution of charge.
+
+\subsection*{Discharging arguments}
+Here we introduce the discharging proof method. For the rest of this lecture
+and in the next two lectures we prove claims using this method. The rest of
+this lecture and the following lecture are both covered by the lecture notes
+\enquote{Discharging and reducible configurations}.
+
+\begin{theorem}
+	Every planar graph without $4$-cycles is $4$-colorable.
+\end{theorem}
+
+\noindent
+This of course is a consequence of the Four Color Theorem. However we prove
+this statement without using 4CT to show off the discharging method.
+
+
+\newpage
+\section{Discharging 2} % Lecture 6
+7.11.2023
+
+\begin{lemma}[How to select initial charge?]
+	Let $G$ be a planar graph. Let $a, b \in \mathbb{R}^+, a \le b$. Let
+	$ch_0(v) = a \deg v  - 2b$ for $v \in V(G)$ and $ch_0(f) = (b - a)|f| -
+	2b$ for $f \in F(G)$. Then the sum of all initial charges is $-4b < 0$.
+\end{lemma}
+
+\noindent
+Typical initial charges are
+$$a = 1, b = 3 \rightarrow ch_0(v) = \deg v  - 6, ch_0(f) = 2|f|-6$$
+$$a = 1, b = 2 \rightarrow ch_0(v) = \deg v - 4, ch_0(f) = |f| - 4$$
+All choices are in some sense equivalent. If you can complete a discharging
+argument with $(a, b)$, you can do it with any $(a', b')$.
+
+\begin{theorem}
+	Every planar graph without $4$-cycles is $4$-choosable.
+\end{theorem}
+
+\noindent
+This claim is very similar to the claim we proved in the last
+lecture. However here we claim choosability instead of colorability.
+
+
+\newpage
+\section{Discharging 3: Grötzsch} % Lecture 7
+14.11.2023
+
+\noindent
+In this lecture we try to prove Grötzsch's theorem using discharging. The
+initial attempt to prove it directly fails so we attempt to prove a stronger
+theorem (although with more preconditions) from which Grötzsch will follow.
+We don't succeed in proving the first version of this stronger theorem. We do
+succeed once we add more preconditions.
+
+\begin{theorem}[Grötzsch]
+	Every triangle-free planar graph is 3-colorable.
+\end{theorem}
+
+\begin{theorem}[Not true]
+	Suppose $G$ is triangle-free planar graph with the other face bounded
+	by a cycle $C, |C| \le 6$, $\psi$ is a $3$-coloring of $C$, then $\psi$
+	extends to a $3$-coloring of $G$.
+\end{theorem}
+
+\begin{theorem}[True and implies Grötzsch]
+	Suppose $G$ is triangle-free planar graph with the other face bounded
+	by an \textbf{induced cycle} $C, |C| \le 6$, $\psi$ is a $3$-coloring
+	of $C$, then $\psi$ extends to a $3$-coloring of $G$.
+	\textbf{We also assume that if $|C| = 6$, $\psi$ is not a cyclic
+	coloring.}
+\end{theorem}
+
+
+\newpage
+\section{Nowhere-zero flows 1} % Lecture 8
+21.11.2023
+
+\noindent
+In contrast to standard flows, $A$-flows aren't bound by edge capacities, don't
+have source and target vertices and are based on finite abelian groups instead
+of real numbers.
+
+This lecture maps nicely to the \enquote{Nowhere-zero flows} lecture notes from
+prof. Dvořák's website.
+
+\subsection*{Notation}
+For edge $e = uv$, $-e := vu$.
+
+\subsection*{$A$-flows}
+
+\begin{definition}[$A$-flow]
+	Let $A$ be an abelian finite group. An \emph{A-flow} in a graph $G$ is
+	a function $f: E(G) \rightarrow A$ such that
+	\begin{itemize}
+		\item $\forall uv \in E(G): f(uv) = -f(vu)$
+		\item $\forall v \in V(G): \sum_{uv \in E(G)}{f(uv)} = 0$
+			(Kirkhof)
+	\end{itemize}
+	For $S \subseteq V(G)$, let $f(S) = \sum_{u \in S, v \in V(G) \setminus
+	S}{f(uv)}$
+\end{definition}
+
+\begin{definition}
+	A \emph{nowhere-zero flow} is an $A$-flow such that $\forall e \in E:
+	f(e) \neq 0$.
+\end{definition}
+
+\noindent
+\textbf{Observations.}
+\begin{itemize}
+	\item $G$ has nowhere-zero $\Z_2$-flow iff $G$ is eulerian.
+	\item $3$-regular $G$ has a nowhere-zero $\Z_3$-flow iff $G$
+		bipartite.
+	\item $3$-regular $G$ has a nowhere-zero $(\Z_2 \times \Z_2)$-flow iff
+		$G$ is $3$-edge-colorable.
+	\item For every $A$-flow: $\sum_{u \in S, v \in V(G) \setminus S}f(uv)
+		= 0$
+	\item $G$ has nowhere-zero $A$-flow $\implies \nexists$ edge-cut of
+		size $1$ (bridgeless)
+\end{itemize}
+
+\subsection*{$A$-tensions}
+
+\begin{definition}[$A$-tension]
+	Let $A$ be an abelian finite group. An \emph{A-tension} in a graph $G$
+	is a function $t: E(G) \rightarrow A$ such that
+	\begin{itemize}
+		\item $\forall uv \in E(G): t(e) = -t(-e)$
+		\item $\forall$ cycle $C$ in $G: t(C) = 0$
+	\end{itemize}
+\end{definition}
+
+\noindent
+These lemmas will help us interchange $A$-colorings, $A$-flows and
+$A$-tensions.
+
+\begin{lemma}
+	If $t$ is an $A$-tension in graph $G$ and $W$ a closed walk, then
+	$t(W) = 0$.
+\end{lemma}
+
+\begin{lemma}
+	Graph $G$ has a propper coloring using $A$ iff $G$ has a nowhere-zero
+	$A$-tension.
+\end{lemma}
+
+\begin{lemma}
+	A planar connected graph $G$ has a nowhere-zero $A$-tension iff $G^*$
+	has nowhere-zero $A$-flow.
+\end{lemma}
+
+%\begin{lemma}
+%	$t$ is an $A$-tension in a planar connected graph $G$ iff $t^*$ is an
+%	$A$-flow in $G^*$.
+%
+%	(For edge $uv$ in $G$, we set $t^*(gh) := t(uv)$
+%	where $g$ is the face on the right of $uv$ and $h$ is the face on the
+%	left of $uv$.)
+%\end{lemma}
+
+\subsection*{Applying the $A$-flow theory}
+
+\textbf{Observations.}
+\begin{itemize}
+	\item $G^*$ is $3$-regular iff $G$ is a triangulation
+	\item Plane triangulation $G$ is $3$-colorable iff $G$ is eulerian
+	\item Plane triangulation $G$ is $4$-colorable iff $G^*$ (a planar
+		$3$-regular bridgeless graph) is $3$-edge-colorable
+\end{itemize}
+
+\noindent
+The dual in the last observation is bridgeless because $G$ would have to be a
+multigraph (have loops) in order for its dual to have bridges.
+
+\begin{theorem}
+	The following claims are equivalent:
+	\begin{itemize}
+		\item Every planar graphs is $4$-colorable
+		\item Every planar $3$-regular bridgeless graph is
+			$3$-edge-colorable
+	\end{itemize}
+\end{theorem}
+
+\subsection*{What is known and not known}
+These are open problems:
+
+\begin{conjecture}[$5$-flow-conjecture]
+	Every bridgeless graph has a nowhere-zero $\Z_5$-flow.
+\end{conjecture}
+
+\begin{conjecture}[$4$-flow-conjecture]
+	Every bridgeless graph not containing the Petersen graph as a minor has
+	a nowhere-zero $\Z_4$-flow (or $\Z_2 \times \Z_2$ -- it doesn't
+	matter).
+\end{conjecture}
+
+\noindent
+The $4$-flow-conjecture would imply the $4$-color theorem.
+
+\begin{conjecture}[$3$-flow-conjecture]
+	Every $4$-edge-connected graph has a nowhere-zero $\Z_3$-flow.
+\end{conjecture}
+
+\noindent
+The $3$-flow-conjecture would imply the Grötzsch's theorem.
+
+\noindent
+What we do know:
+\begin{itemize}
+	\item $G$ is bridgeless $\implies$ nowhere-zero $\Z_6$-flow
+	\item $G$ is $4$-edge-connected $\implies$ nowhere-zero $\Z_4$-flow
+	\item $G$ is $6$-edge-connected $\implies$ nowhere-zero $\Z_3$-flow
+\end{itemize}
+
+\noindent
+Actually, we are going to prove the second result and a weaker result for
+bridgeless graphs in the next lecture.
+
+\subsection*{Number of nowhere-zero $A$-flows}
+$\chi^*(G, A) := \#$ of nowhere-zero $A$-flows in $G$
+
+\noindent
+\textbf{Observations.}
+\begin{itemize}
+	\item $E(G) = \emptyset \rightarrow \chi^*(G,A) = 1$
+	\item $e \in E(G)$
+		\begin{itemize}
+			\item $e$ bridge $\implies \chi^*(G, A) = 0$
+			\item $e$ loop $\implies \chi^*(G, A) =
+				(|A|-1)\chi^*(G-e,A)$
+			\item $e$ normal $\implies \chi^*(G, A) = \chi^*(G / e,
+				A) - \chi^*(G - e, A)$
+		\end{itemize}
+	\item $|A_1| = |A_2| \implies \chi^*(G,A_1) = \chi^*(G,A_2)$
+\end{itemize}
+
+
+\newpage
+\section{Nowhere-zero flows 2, Four Color Theorem 1} % Lecture 9
+28.11.2023
+
+\subsection*{Nowhere-zero flows}
+Our goal in this lecture is to prove these two theorems.
+
+\begin{theorem}
+	If $G$ is $4$-edge-connected, then $G$ has a nowhere-zero
+	$\Z_2^2$-flow.
+\end{theorem}
+
+\begin{theorem}
+	If $G$ is $2$-edge-connected (=bridgeless), then $G$ has a nowhere-zero
+	$\Z_2^3$-flow.
+\end{theorem}
+
+\begin{lemma}
+	If $T$ is a spanning tree of a connected graph $G$, then $G$ has an
+	$A$-flow which is zero only on a subset of edges of $T$.
+\end{lemma}
+
+\begin{theorem}[Nash-Williams]
+	If $G$ is $2k$-edge-connected, then $G$ has $k$ pairwise disjoint
+	spanning trees.
+\end{theorem}
+
+\noindent
+Without proof.
+
+
+\subsection*{Four Color Theorem}
+In the rest of this lecture and in the following one we will go through a part
+of the proof of the Four Color Theorem theorem to ilustrate the principle . The
+whole proof would be too long and technical.
+
+We will use the discharging technique. Thanks to an equivalence proven in the
+previous lecture we can focus on proving this statement instead of proving the
+Four Color Theorem directly.
+
+\begin{theorem}[The Four Color Theorem, edge coloring version]
+	Every planar bridgeless $3$-regular graph is $3$-edge-colorable.
+\end{theorem}
+
+\noindent
+We are going to consider the minimal counterexample in the number of vertices.
+
+We are going to use the notation $G_A$ meaning subgraph of $G$ induced by $A$
+with edges leaving $A$ included and $S(G, A) := \{ f: \{1,...,k\} \rightarrow
+\{1,2,3\}: \exists$ $3$-edge-coloring of $G_A$ s.t. $\forall i:$ the $i$-th
+edge leaving $A$ has color $f(i) \}$, where $k$ is the number of edges leaving
+$A$.
+
+\begin{observation}
+	~
+	\begin{itemize}
+		\item Given a cut $(A,B)$, $G$ is $3$-edge-colorable iff
+			$S(G,A) \cap S(G,B) \neq \emptyset$
+		\item If $\varphi \in S(G,A)$, then
+			$|\varphi^{-1}(1)| \equiv |\varphi^{-1}(2)|
+			\equiv |\varphi^{-1}(3)| \pmod{2}$
+		\item If $G$ smallest counterexample, $G_B$ not a forest, then
+			$S(G,A) \neq \emptyset$
+	\end{itemize}
+\end{observation}
+
+\begin{definition}
+	An edge cut $(A, B)$ is \emph{cyclic} if neither $G_A$ nor $G_B$ is a
+	forest.
+\end{definition}
+
+\begin{lemma}
+	A minimal counterexample is cyclically $4$-edge-connected.
+\end{lemma}
+
+\begin{definition}[Kempe consistency]
+	Let $S$ be a set of functions $f: \{1,...,k\} \rightarrow \{1,2,3\}$.
+	$S$ is \emph{kempe consistent} if
+	$\forall \varphi \in S: \forall c_1 \neq c_2 \exists$ planar matching
+	on $\varphi^{-1}(c_1) \cup \varphi^{-1}(c_2)$ s.t. $S$ contains all
+	$\varphi'$ obtained from $\varphi$ by switching $c_1$ and $c_2$ on a
+	subset of the matching.
+\end{definition}
+
+\noindent
+Okay, but what does this mean? Let's start with \emph{planar matching}. Assume
+we have an odd number of objects ordered in some way. Put them in order on the
+rim of a disc. Now pair the objects. If the pairing allows you to draw lines
+between objects of each pair without the lines intersecting, you have a planar
+matching.
+
+Now we have $k$ objects -- the $k$ edges leaving $A$. We also
+have a set $S$ of colorings of these edges. Take a coloring $\varphi$
+from the set. If the set $S$ is \emph{kempe consisten}, you should be able to
+do the following and end up with a coloring $\varphi'$ also present in $S$.
+
+Pick any two different colors $c_1,c_2 \in \{1,2,3\}$. Pick any planar matching
+on edges leaving $A$ of colors $c_1$ and $c_2$. Now for any pairs, flip their
+colors (a pair of edges both colored $c_1$ becomes colored $c_2$, a pair of
+edges where the first one is colored $c_1$ and the second $c_2$ becomes a pair
+where the first on is colored $c_2$ and the second $c_1$).
+
+\begin{observation}
+	$S(G, A)$ is Kempe consistent.
+\end{observation}
+
+\begin{lemma}
+	A minimal counterexample is cyclically $5$-edge-connected.
+\end{lemma}
+
+
+\newpage
+\section{Four Color Theorem 2} % Lecture 10
+5.12.2023
+
+\noindent
+In this lecture we finish the excursion into the proof of the Four Color
+Theorem.
+
+\begin{lemma}
+	A minimal counterexample is cyclically $6$-edge-connected except for
+	cuts around $5$-cycles.
+\end{lemma}
+
+\noindent
+There was a lemma about a graph consisting of four $5$-cycles not being a
+subgraph of any minimal example. See someones notes for that. I don't want to
+draw it in tex.
+
+\begin{lemma}
+	A minimal counterexample must contain a vertex of degree $\in \{7, ...,
+	11\}$.
+\end{lemma}
+
+
+\newpage
+\section{Results for list coloring} % Lecture 11
+12.12.2023
+
+\begin{theorem}[Voigt'94]
+	There exists $G$ planar and $L$ assigment of size $4$ s.t. $G$ is
+	not $L$-colorable.
+\end{theorem}
+
+\noindent
+The proof is based on gadgets which we use to construct a planar graph and its
+list assignments so that the graph is not list-colorable.
+
+\begin{theorem}[Thomassen'93]
+	Let $G$ be planar. $\chi_l(G) \le 5$.
+\end{theorem}
+
+\begin{theorem}[List coloring analog of Grötzsch doesn't hold]
+	There exists $G$ planar triangle-free and $L$ assignment of size $3$
+	s.t. $G$ is not $L$-colorable.
+\end{theorem}
+
+\noindent
+We might think that Grötzsch's theorem might hold for list chromatic number
+too -- for each $G$ planar $\chi_l \le 3$. This theorem provides a
+counterexample to this claim. The proof is based on the same gadget technique
+as Voigt'94.
+
+However, these weaker claims hold:
+
+\begin{observation}
+	Let $G$ be planar triangle-free $\chi_l(G) \le 4$.
+\end{observation}
+
+\begin{theorem}
+	Let $G$ be planar with girth $\ge 5$. $\chi_l(G) \le 3$.
+\end{theorem}
+
+
+\newpage
+\section{Different coloring concepts} % Lecture 12
+19.12.2023
+
+\noindent
+Taken from the \enquote{Circular coloring} lecture notes:
+
+\noindent
+Suppose we have a list of tasks, each taking one unit of time to accomplish.
+The tasks can be performed in parallel, however some of the tasks conflict:
+they cannot be worked on at the same time. This is expressed by a
+\emph{conflict graph} G, whose vertices are the tasks and edges join pairs of
+conflicting tasks. There are several scheduling problems one can consider in
+this setting:
+
+\begin{itemize}
+	\item Suppose the tasks are indivisible—once you start working on a
+		task, you must finish it (and it takes one unit of time, during
+		which you cannot work on the conflicting tasks). Hence, during
+		each unit of time, you can finish in parallel tasks
+		corresponding to an independent set in G, and thus the minimum
+		time needed to finish all tasks is exactly the chromatic number
+		$\chi(G)$ of $G$.
+	\item Suppose the tasks are divisible—you can interrupt your work on a
+		task at any moment and continue later, and the task is finished
+		once you devoted one unit of time to it in total. In this case,
+		the minimum time needed to finish all tasks is exactly the
+		fractional chromatic number $\chi_f(G)$ of $G$.
+	\item The circular chromatic number of $G$ corresponds to the case
+		that the tasks are indivisible, but they are to be performed
+		repeatedly; we now ask to create a periodic schedule in which
+		all tasks are performed for one consecutive unit of time every
+		$t$ units of time, and we ask what is the minimum $t$ for that
+		this is possible.
+\end{itemize}
+
+\begin{definition}[Circular coloring]
+	~
+	\begin{itemize}
+		\item \emph{$r$-circular coloring} of a graph $G$ is a function
+			$\varphi: V(G) \rightarrow$ open unit intervals of a
+			circle of circumference $r$ s.t. $$ (\forall uv \in
+			E(G)) \varphi(u) \cap \varphi(v) = \emptyset $$
+		\item \emph{Circular chromatic number} $\chi_c(G)$ is defined
+			as $\inf\{r \in \mathbb{R}:$ G has an $r$-circular
+			coloring $\}$
+	\end{itemize}
+\end{definition}
+
+\begin{definition}[Fractional coloring]
+	~
+	\begin{itemize}
+		\item \emph{Fractional coloring} of a graph $G$ is a function
+			$\varphi: V(G) \rightarrow$ measurable sets of measure
+			$1$ s.t. $$ (\forall uv \in E(G)) \varphi(u) \cap
+			\varphi(v) = \emptyset $$
+		\item $|\varphi| :=$ measure of $\bigcup_{v \in V(G)}
+			\varphi(v)$
+		\item \emph{Fractional chromatic number} $\chi_f(G)$ is defined
+			as $\inf\{|\varphi|: \varphi$ is a fractional coloring
+			of $G\}$
+	\end{itemize}
+\end{definition}
+
+\subsection*{Circular coloring}
+
+\begin{observation}
+	~
+	\begin{itemize}
+		\item $\chi_c + 1 > \chi \ge \chi_c \ge \chi_f \ge \omega$
+		\item There's an $O(n!)$ LP-based alg for finding $\chi_c$ and
+			$\chi_c$ is always rational.
+	\end{itemize}
+\end{observation}
+
+\noindent
+The consequence of the second observation is that we can write min instead of
+inf in the definition of $\chi_c$.
+
+\begin{theorem}
+	If $\chi_c(G) \le {a \over b}, a,b \in \mathbb{N}$, then $G$ has an $a
+	\over b$-circular coloring in which the intervals start at multiples of
+	$1 \over b$.
+\end{theorem}
+
+\noindent
+This effectively makes a discrete problem from a continuous one!
+
+\begin{definition}[Discrete definition of circular coloring]
+	\emph{$a \over b$-circular coloring} of a graph $G$ is a function
+	$\varphi: V(G) \rightarrow \{0, ..., a-1\}$ s.t.
+	$$(\forall uv \in E(G)) a - b \ge | \varphi(u) - \varphi(v) | \ge b $$
+\end{definition}
+
+\subsection*{Fractional coloring}
+
+Suppose I have a schedule where interrupting tasks and working on them later is
+acceptable. I can divide the schedule into slices based on points in time where
+tasks begin or end. In each of this slice a certain independent set of the
+conflict graph will be active.
+
+Therefore I can view the problem of fractional coloring as the problem of
+assigning durations to independent sets of the conflict graph.
+
+\begin{definition}[Independent set definition of fractional coloring]
+	~
+	\begin{itemize}
+		\item \emph{Fractional coloring} of graph $G$ is a function
+			$\psi:$ independent sets of $G \rightarrow
+			\mathbb{R}_0^+$ s.t.
+			$$ \forall v \in V(G): \sum_{I \ni v} \psi(I) = 1 $$
+		\item \emph{Fractional chromatic number} of $G$ is defined
+			as
+			$$ \chi_f(G) = \min \sum_I \psi(I) $$
+	\end{itemize}
+\end{definition}
+
+\noindent
+Note that this can be solved by linear programming so -- again -- $\chi_f$ is
+always rational and we can write min instead of inf in its original definition.
+
+The program has exponentially many variables though, so this does not give us a
+polynomial algorithm.
+
+\begin{definition}
+	\emph{$(a:b)$-coloring} of a graph $G$ is a function $\varphi:
+	\binom{\{1, ..., a\}}{b} \rightarrow V(G)$ s.t.
+	$$ \forall uv \in E(G): \varphi(u) \cap \varphi(v) = \emptyset $$
+\end{definition}
+
+\begin{theorem}
+	$\chi_f(G) = \min \{ {a \over b} : G$ has a $(a : b)$-coloring $\}$
+\end{theorem}
+
+\noindent
+Not sure if this theorem was proven in the lecture or just stated.
+
+\begin{definition}[Kneser graphs]
+	$K_{a:b}$ is a graph with vertices $\binom{\{1,...,a\}}{b}$ s.t. $xy
+	\in E(K_{a:b}) \Leftrightarrow x \cap y = \emptyset$
+\end{definition}
+
+\noindent
+$K_{5:2}$ is the Peterson graph.
+
+\begin{observation}
+	$\chi_f(K_{a:b}) = {a \over b}$
+\end{observation}
+
+\noindent
+However Kneser graphs have large chromatic numbers:
+
+\begin{theorem}
+	For $a \ge 2b: \chi(K_{a:b}) = a - 2b + 2$
+\end{theorem}
+
+\noindent
+From this follows that $K_{10:4}$ doesn't have a $(5:2)$-coloring. Also, this
+
+\noindent
+Not sure if this theorem was proven in the lecture or just stated.
+theorem rejects the idea that $\chi_f$ might be proportionate to $\chi$.
+
+
+\newpage
+\section{Counting method} % Lecture 13
+9.1.2024
+
+\begin{definition}
+	An \emph{acyclic coloring} of a graph $G$ is a proper coloring s.t.
+	each subgraph induced by any two colors is a forest.
+\end{definition}
+
+\noindent
+Equivalently \enquote{there are at least $3$ colors on any cycle}
+
+\begin{theorem}[Borodin]
+	Let $G$ be planar. $\chi_a(G) \le 5$.
+\end{theorem}
+
+\noindent
+Without proof.
+
+\begin{observation}
+	If $\chi_a(G) \le K$, then $|E(G)| \le (K-1)|V(G)|$
+\end{observation}
+
+\noindent
+\enquote{If we want $\chi_a$ to be reasonably low we are looking for sparse
+graphs.}
+
+\begin{theorem}
+	$\chi_a(G) \le \lceil \Delta + 3 \Delta^{3 \over 2} \rceil$
+\end{theorem}
+
+\noindent
+So acyclic chromatic number can be bounded by a function of max degree.
+
+\begin{theorem}
+	For $\Delta \ge 10^{100}$, every triangle-free graph $G$ of max degree
+	$\le \Delta$ has $\chi(G) \le \left \lceil {{4\Delta} \over
+	{\log{\Delta}}} \right \rceil$.
+\end{theorem}
+
+
+\end{document}
