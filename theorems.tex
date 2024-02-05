@@ -170,7 +170,7 @@ Can we extend $\chi$ theorems to $\chi_l$?
 	~
 	\begin{itemize}
 		\item \emph{degree-list-assignment} is a list-assignment s.t.
-			$\forall v: |L(v)| \le \deg v$.
+			$\forall v: |L(v)| \ge \deg v$.
 
 		\item A graph $G$ is \emph{degree-list-colorable}
 			(=degree-choosable) if it can be colored by colors from
@@ -201,16 +201,21 @@ $k$-star graph.
 	v$. Then $G$ is $L$-colorable.
 \end{lemma}
 \begin{proof}
-	Take $v$ with $|L(v)| > \deg v$, color it with any color, remove the
-	color from lists of its neighbors, remove $v$ from graph. Now the
-	neighbors all have $|L(w)| > \deg w$. Repeat until everything is
-	colored.
+	Analogous to the greedy alg for $(d+1)$-coloring $d$-degenerate. Take
+	away the $v$ with $\deg v \le |L(v)|$. Now each neighbor $w$ has $\deg
+	w \le |L(v)|$. Keep taking away these vertices. Now color the vertices
+	in the opposite order to the one in which you took them away. Each time
+	you try to color a vertex, it will have fewer neighbors than colors in
+	its list.
+
+	This doesn't work for unconnected graphs. You'd have to have $v: |L(v)|
+	> \deg v$ in each component.
 \end{proof}
 
-\begin{lemma}
+\begin{corollary}
 	$G$ connected, $L$ degree-list-assignment, $uv \in E(G)$, $v$ is not a
 	cut vertex, $G$ is not $L$-colorable. Then $L(u) \subseteq L(v)$.
-\end{lemma}
+\end{corollary}
 
 \begin{corollary}
 	$G$ connected, $L$ degree-list-assignment, $uv \in E(G)$, $u, v$ not
@@ -222,6 +227,10 @@ $k$-star graph.
 	Then $(\forall u, v \in V(G)) L(u) = L(v)$ and $G \simeq K_k$ or $G
 	\simeq C_{2l+1}$.
 \end{corollary}
+
+\noindent
+The first two corollaries are consequences of the lemma. The last corollary
+also uses Brook's theorem in its proof.
 
 
 \newpage
@@ -1071,6 +1080,8 @@ $K_{5:2}$ is the Peterson graph.
 
 \begin{observation}
 	$\chi_f(K_{a:b}) = {a \over b}$
+
+	(this was given as a homework, I have no idea how to prove this)
 \end{observation}
 
 \noindent

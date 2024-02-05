@@ -9,6 +9,17 @@ See releases for compiled pdf files. I welcome pull requests.
 
 ## Changelog
 
+version 3
+
+- section List Coloring: Flipped inequality in definition of
+  degree-list-assigment
+- section List Coloring: Fixed proof of one of the lemmas
+- section List Coloring: One of the lemmas is now a corollary
+- section List Coloring: Added a remark about the structure of the proof of the
+  theorem
+- section Different coloring concepts: "I don't know how to prove the
+  observation"
+
 version 2 ... 2024/01/31
 
 - section Good to remember: Fixed the (d+1)-coloring algorithm for d-degenerate graphs
