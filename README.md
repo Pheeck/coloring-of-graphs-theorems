@@ -9,7 +9,7 @@ See releases for compiled pdf files. I welcome pull requests.
 
 ## Changelog
 
-version 3
+version 3 ... 2024/02/05
 
 - section List Coloring: Flipped inequality in definition of
   degree-list-assigment
